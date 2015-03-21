@@ -85,7 +85,6 @@
           html += "<li data-name='+ name +'>"+ name[i] + "</li>";
         }
         $('#users').html(html);
-    
       });
 
       $('#send-message').submit(function(e){
@@ -112,50 +111,3 @@
   </script>
 </body>
 </html>
-
-<li>
-
-
-
-
-
-<!--
-/*      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input #message { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form .submit { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }*/
-
-      var socket = io.connect();
-      // var $nickForm = $('#setNick');
-      // var $nickError = $('#nickError');
-      var $nickBox = $('#nickname');
-      // var $users = $('#users');
-      // var $messageForm = $('#send-message');
-      var $messageBox = $('#message');
-      // var $chat = $('#chat');
-
-
-  <div id="nickWrap">
-    <p>Enter Username:</p>
-    <p id="nickError"></p>
-    <form action="" id="setNick">
-      <input type="text" id="nickname">
-      <input type="submit" class="submitNick">
-    </form>
-  </div>
-
-  <div id="contentWrap">
-    <div id="users"></div>
-    <div id="chatWrap">
-      <div id="chat" style=""></div>
-      <form action="" id="send-message">
-        <input id="message">
-        <input type="submit" class="submit">
-      </form>
-    </div>
-    <div id="users"></div>
-  </div> -->
