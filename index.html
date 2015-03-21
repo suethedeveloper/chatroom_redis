@@ -28,36 +28,36 @@
 </head>
 <body>
 
-<div class="row"><div class="col-md-12" id="add_chatter"></div></div>
-<div class="row" id="nickWrap">
-  <div class="col-md-12">
-    <p>Enter Username:</p>
-    <p id="nickError" class="text-danger"></p>
-    <form action="" id="setNick">
-      <input type="text" id="nickname">
-      <input type="submit" class="submitNick">
-    </form>
+  <div class="row"><div class="col-md-12" id="add_chatter"></div></div>
+  <div class="row" id="nickWrap">
+    <div class="col-md-12">
+      <p>Enter Username:</p>
+      <p id="nickError" class="text-danger"></p>
+      <form action="" id="setNick">
+        <input type="text" id="nickname">
+        <input type="submit" class="submitNick">
+      </form>
+    </div>
+  </div> <!-- end of username row -->
+  <div class="row" id="contentWrap">
+    <div class="col-md-2 col-sm-2" id="users"></div>
+    <div class="col-md-10 col-sm-10" id="chat"></div>
   </div>
-</div> <!-- end of username row -->
-<div class="row" id="contentWrap">
-  <div class="col-md-2 col-sm-2" id="users"></div>
-  <div class="col-md-10 col-sm-10" id="chat"></div>
-</div>
 
-<div class="row" id="chatWindow">
-  <div class="col-md-12">
-    <form id="send-message">
-      <input id="message">
-      <input type="submit" class="submit">
-    </form>    
+  <div class="row" id="chatWindow">
+    <div class="col-md-12">
+      <form id="send-message">
+        <input id="message">
+        <input type="submit" class="submit">
+      </form>    
+    </div>
   </div>
-</div>
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script>
     jQuery(function($){
