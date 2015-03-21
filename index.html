@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chatroom with Redis</title>
+     <style>
+      * { margin: 10; padding: 10; box-sizing: border-box; }
+      body { font: 14px Helvetica, Arial;}
+
+      #message { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      #chat li:nth-child(odd) { background: #eee; }
+      .submit { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      div {
+        padding: 15px;
+      }
+      #contentWrap {
+        display: none;
+      }
+
+      #send-message { background: #000; padding: 3px;  bottom: 0; width: 100%; }
+      #chatWindow {
+        position: fixed;
+        /*position: absolute;*/
+        bottom: 0;
+        width: 100%;
+      }      
+    </style>
+</head>
+<body>
+
+<div class="row"><div class="col-md-12" id="add_chatter"></div></div>
+<div class="row" id="nickWrap">
+  <div class="col-md-12">
+    <p>Enter Username:</p>
+    <p id="nickError" class="text-danger"></p>
+    <form action="" id="setNick">
+      <input type="text" id="nickname">
+      <input type="submit" class="submitNick">
+    </form>
+  </div>
+</div> <!-- end of username row -->
+<div class="row" id="contentWrap">
+  <div class="col-md-2 col-sm-2" id="users"></div>
+  <div class="col-md-10 col-sm-10" id="chat"></div>
+</div>
+
+<div class="row" id="chatWindow">
+  <div class="col-md-12">
+    <form id="send-message">
+      <input id="message">
+      <input type="submit" class="submit">
+    </form>    
+  </div>
+</div>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    jQuery(function($){
+      var socket = io.connect();
+      var $nickBox = $('#nickname');
+      var $messageBox = $('#message');
+
+      $('#setNick').submit(function(e){
+        e.preventDefault();
+        socket.emit('join', $nickBox.val(), function(data){
+          if(data) {
+            $('#nickWrap').hide();
+            $('#contentWrap').show();
+            $('#chatWindow').show();
+          } else {
+            $('#nickError').html('That username is already taken. Enter different username.');
+          }
+        });
+        $nickBox.val('');
+      });
+
+      socket.on('usernames', function(name){
+        var html = "";
+        for (var i = 0; i < name.length; i++) {
+          html += "<li data-name='+ name +'>"+ name[i] + "</li>";
+        }
+        $('#users').html(html);
+    
+      });
+
+      $('#send-message').submit(function(e){
+        e.preventDefault();
+        socket.emit('send message', $messageBox.val());
+        $messageBox.val('');
+      });
+
+      socket.on('new message', function(data){
+        $('#chat').append("<li><strong>" + data.nick + ":</strong> " + data.msg +"</li>");
+      });
+
+      socket.on('add chatter', function(data){
+        $('#add_chatter').html('');
+        $('#add_chatter').append(data + " has just joined this chatroom.");
+      });
+      
+      socket.on('remove chatter', function(name){
+        $('#add_chatter').html('');
+        $('#add_chatter').append(name + " has just left this chatroom.");
+      });
+
+  });
+  </script>
+</body>
+</html>
+
+<li>
+
+
+
+
+
+<!--
+/*      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input #message { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form .submit { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }*/
+
+      var socket = io.connect();
+      // var $nickForm = $('#setNick');
+      // var $nickError = $('#nickError');
+      var $nickBox = $('#nickname');
+      // var $users = $('#users');
+      // var $messageForm = $('#send-message');
+      var $messageBox = $('#message');
+      // var $chat = $('#chat');
+
+
+  <div id="nickWrap">
+    <p>Enter Username:</p>
+    <p id="nickError"></p>
+    <form action="" id="setNick">
+      <input type="text" id="nickname">
+      <input type="submit" class="submitNick">
+    </form>
+  </div>
+
+  <div id="contentWrap">
+    <div id="users"></div>
+    <div id="chatWrap">
+      <div id="chat" style=""></div>
+      <form action="" id="send-message">
+        <input id="message">
+        <input type="submit" class="submit">
+      </form>
+    </div>
+    <div id="users"></div>
+  </div> -->
