@@ -4,14 +4,23 @@
   <meta charset="UTF-8">
   <title>Chatroom with Redis</title>
      <style>
-      * { margin: 10; padding: 10; box-sizing: border-box; }
-      body { font: 14px Helvetica, Arial;}
+      * { box-sizing: border-box; }
+      body { font: 20px Helvetica, Arial;}
 
-      #message { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      #chat li:nth-child(odd) { background: #eee; }
+      #message { border: 1; padding: 10px; width: 90%; margin-right: .5%; }
+      #chat ul li:nth-child(odd) { 
+        background: #eee; 
+        -webkit-border-radius: 7px;
+        -moz-border-radius: 7px;
+        border-radius: 7px;
+        padding: 10px;
+      }
+      div .addcolor:nth-child(odd){
+        background: #eee; 
+      }
       .submit { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
       div {
-        padding: 15px;
+        padding: 5px;
       }
       #contentWrap {
         display: none;
@@ -23,15 +32,22 @@
         /*position: absolute;*/
         bottom: 0;
         width: 100%;
-      }      
+      }  
+      #users{
+        -moz-box-shadow: 0 0 1px black;
+        -webkit-box-shadow: 0 0 1px black;
+         box-shadow: 0 0 1px black; 
+      } 
+      .userStyle {
+        border-bottom-style: dotted;
+      }     
     </style>
 </head>
 <body>
-
-  <div class="row"><div class="col-md-12" id="add_chatter"></div></div>
-  <div class="row" id="nickWrap">
-    <div class="col-md-12">
-      <p>Enter Username:</p>
+  <div class="row text-center"><div class="col-md-12 lead text-info" id="add_chatter"></div></div>
+  <div class="row text-center" id="nickWrap">
+    <div class="col-md-12 lead">
+      Enter Username:
       <p id="nickError" class="text-danger"></p>
       <form action="" id="setNick">
         <input type="text" id="nickname">
@@ -39,10 +55,12 @@
       </form>
     </div>
   </div> <!-- end of username row -->
+<div class="container">  
   <div class="row" id="contentWrap">
-    <div class="col-md-2 col-sm-2" id="users"></div>
-    <div class="col-md-10 col-sm-10" id="chat"></div>
+    <div class="col-md-2 col-sm-2 lead" id="users"></div>
+    <div class="col-md-9 col-sm-10 col-md-offset-1 lead" id="chat"></div>
   </div>
+</div>
 
   <div class="row" id="chatWindow">
     <div class="col-md-12">
@@ -64,9 +82,11 @@
       var socket = io.connect();
       var $nickBox = $('#nickname');
       var $messageBox = $('#message');
+      var x = $('#nickname').val();
 
       $('#setNick').submit(function(e){
         e.preventDefault();
+        x = $('#nickname').val();
         socket.emit('join', $nickBox.val(), function(data){
           if(data) {
             $('#nickWrap').hide();
@@ -80,9 +100,9 @@
       });
 
       socket.on('usernames', function(name){
-        var html = "";
+        var html = "<div class='userStyle'><strong>Users:</strong></div>";
         for (var i = 0; i < name.length; i++) {
-          html += "<li data-name='+ name +'>"+ name[i] + "</li>";
+          html += "<div class='addcolor' data-name='+ name +'>"+ name[i] + "</div>";
         }
         $('#users').html(html);
       });
@@ -94,12 +114,15 @@
       });
 
       socket.on('new message', function(data){
-        $('#chat').append("<li><strong>" + data.nick + ":</strong> " + data.msg +"</li>");
+        var html = $("<ul class='list-unstyled list-inline'></ul>");
+        var li = $("<li><strong>" + data.nick + ":</strong> " + data.msg +"</li><br>");
+        html.append(li);
+        $('#chat').append(html);
       });
 
       socket.on('add chatter', function(data){
         $('#add_chatter').html('');
-        $('#add_chatter').append(data + " has just joined this chatroom.");
+        $('#add_chatter').append("<strong>"+data + "</strong> has just joined this chatroom.");
       });
       
       socket.on('remove chatter', function(name){
