@@ -37,6 +37,8 @@
         -moz-box-shadow: 0 0 1px black;
         -webkit-box-shadow: 0 0 1px black;
          box-shadow: 0 0 1px black; 
+         background-color: #5bc0de;
+         color: #fff;
       } 
       .userStyle {
         border-bottom-style: dotted;
@@ -47,7 +49,7 @@
   <div class="row text-center"><div class="col-md-12 lead text-info" id="add_chatter"></div></div>
   <div class="row text-center" id="nickWrap">
     <div class="col-md-12 lead">
-      Enter Username:
+      Enter Screen Name:
       <p id="nickError" class="text-danger"></p>
       <form action="" id="setNick">
         <input type="text" id="nickname">
@@ -100,9 +102,9 @@
       });
 
       socket.on('usernames', function(name){
-        var html = "<div class='userStyle'><strong>Users:</strong></div>";
+        var html = "<div class='userStyle'><strong>Users</strong></div>";
         for (var i = 0; i < name.length; i++) {
-          html += "<div class='addcolor' data-name='+ name +'>"+ name[i] + "</div>";
+          html += "<div data-name='+ name +'>"+ name[i] + "</div>";
         }
         $('#users').html(html);
       });
