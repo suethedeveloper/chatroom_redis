@@ -1,10 +1,10 @@
 var express = require('express'),
     app = express(),
     http = require('http'),
-    server = http.createServer(app),
+    // server = http.createServer(app),
     cluster = require('cluster'),
     // server = require('http').createServer(app),
-    io = require('socket.io').listen(server),
+    // io = require('socket.io').listen(server),
     // redis = require('redis'),
     // client = redis.createClient(),
     nicknames = [];
@@ -24,7 +24,61 @@ if (process.env.REDISTOGO_URL) {
     var redis = require("redis").createClient();
 }
 
+///////////////////////////////////
+//      HTTP SERVER
+///////////////////////////////////
 
+// Configure sticky sessions to ensure requests go to the same child in the cluster.
+// See : https://github.com/indutny/sticky-session
+
+// NOTE: Sticky sessions are based on a hash of the IP address. 
+// This means multiple web browsers or tabs on the same machine will always hit the same slave.
+
+sticky(workers, function() {
+
+  // This code will be executed only in slave workers
+  var server = http.createServer(app);
+
+  var io = require('socket.io')(server);
+
+  // configure socket.io to use redis adapter
+  addRedisAdapter(io);
+
+  // configure socket.io to respond to certain events
+  addIOEventHandlers(io);
+
+  return server;
+
+}).listen(port, function() {
+
+  // this code is executed in both slaves and master
+  console.log('server started on port '+port+'. process id = '+process.pid);
+
+});
+//---------
+
+///////////////////////////////////
+//      REDIS ADAPTER
+///////////////////////////////////
+
+function addRedisAdapter(io) {
+  var redisUrl = process.env.REDISTOGO_URL || 'redis://127.0.0.1:6379';
+  var redisOptions = require('parse-redis-url')(redis).parse(redisUrl);
+  var pub = redis.createClient(redisOptions.port, redisOptions.host, {
+    detect_buffers: true,
+    auth_pass: redisOptions.password
+  });
+  var sub = redis.createClient(redisOptions.port, redisOptions.host, {
+    detect_buffers: true,
+    auth_pass: redisOptions.password
+  });
+
+  io.adapter(redisAdapter({
+    pubClient: pub,
+    subClient: sub
+  }));
+  console.log('Redis adapter started with url: ' + redisUrl);
+}
 
 
 redis.SMEMBERS("nickname", function(err, names){
@@ -32,7 +86,6 @@ redis.SMEMBERS("nickname", function(err, names){
 });
 
 // server.listen(3000);
-server.listen(11280);
 
 
 app.get('/', function(req, res){
@@ -41,6 +94,10 @@ app.get('/', function(req, res){
 
 app.use(express.static(__dirname + '/public'));
 
+
+
+
+function addIOEventHandlers(io) {
 io.sockets.on('connection', function(socket){
   socket.on('join', function(name, callback){
     if (nicknames.indexOf(name) != -1){
@@ -78,3 +135,4 @@ io.sockets.on('connection', function(socket){
   });
 
 });
+}
