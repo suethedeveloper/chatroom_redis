@@ -2,11 +2,23 @@ var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
-    redis = require('redis'),
-    client = redis.createClient(),
+    // redis = require('redis'),
+    // client = redis.createClient(),
     nicknames = [];
 
-client.SMEMBERS("nickname", function(err, names){
+
+if (process.env.REDISTOGO_URL) {
+// inside if statement
+  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+  var redis = require("redis").createClient(rtg.port, rtg.hostname);
+
+  redis.auth(rtg.auth.split(":")[1]);  
+} else {
+    var redis = require("redis").createClient();
+}
+
+
+redis.SMEMBERS("nickname", function(err, names){
    nicknames = names;
 });
 
@@ -25,20 +37,20 @@ io.sockets.on('connection', function(socket){
     } else {
       callback(true);
       socket.broadcast.emit("add chatter", name);
-      client.SMEMBERS('names', function(err, names){
+      redis.SMEMBERS('names', function(err, names){
         names.forEach(function(name){
           io.sockets.emit('add chatter', name);
         });
       });
       
-      client.sadd("nickname", name);
+      redis.sadd("nickname", name);
       socket.nickname = name;
       updateNicknames();
     }
   });
 
   function updateNicknames(){
-    client.SMEMBERS("nickname", function(err, names){
+    redis.SMEMBERS("nickname", function(err, names){
         io.sockets.emit('usernames', names);
     });
   }
@@ -50,7 +62,7 @@ io.sockets.on('connection', function(socket){
   socket.on('disconnect', function(data){
     if (!socket.nickname) return; //user leaves without entering username
     socket.broadcast.emit("remove chatter", socket.nickname);
-    client.SREM("nickname", socket.nickname);
+    redis.SREM("nickname", socket.nickname);
     updateNicknames();
   });
 
