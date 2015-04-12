@@ -11,7 +11,7 @@ var express = require('express'),
 
 var redisAdapter = require('socket.io-redis');
 var sticky = require('sticky-session');
-var port = process.env.PORT || 3333;
+var port = process.env.PORT || 5000;
 var workers = 3;
 
 if (process.env.REDISTOGO_URL) {
@@ -95,6 +95,10 @@ app.get('/', function(req, res){
 app.use(express.static(__dirname + '/public'));
 
 
+console.log("http server listening on %d", port);
+
+// var wss = new WebSocketServer({server: server});
+// console.log("websocket server created");
 
 
 function addIOEventHandlers(io) {
