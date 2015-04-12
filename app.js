@@ -1,11 +1,18 @@
 var express = require('express'),
     app = express(),
-    server = require('http').createServer(app),
+    http = require('http'),
+    server = http.createServer(app),
+    cluster = require('cluster'),
+    // server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     // redis = require('redis'),
     // client = redis.createClient(),
     nicknames = [];
 
+var redisAdapter = require('socket.io-redis');
+var sticky = require('sticky-session');
+var port = process.env.PORT || 3333;
+var workers = 3;
 
 if (process.env.REDISTOGO_URL) {
 // inside if statement
@@ -18,11 +25,15 @@ if (process.env.REDISTOGO_URL) {
 }
 
 
+
+
 redis.SMEMBERS("nickname", function(err, names){
    nicknames = names;
 });
 
-server.listen(3000);
+// server.listen(3000);
+server.listen(11280);
+
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
